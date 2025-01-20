@@ -15,14 +15,14 @@ class UserSerializer(serializers.Serializer):
     email = serializers.EmailField(
         validators=[
             UniqueValidator(
-                queryset=User.objects.all(), message="e-mail already taken."
+                queryset=User.objects.all(), message="email already registered."
             )
         ]
     )
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    birthdate = serializers.DateField()
-    is_employee = serializers.BooleanField()
+    birthdate = serializers.DateField(default=None)
+    is_employee = serializers.BooleanField(default=False)
     password = serializers.CharField(write_only=True)
     is_superuser = serializers.BooleanField(read_only=True)
 
