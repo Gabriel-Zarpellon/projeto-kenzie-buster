@@ -3,9 +3,10 @@ from .serializers import MovieSerializer
 from .models import Movie
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsUserAllowed
+from kenzie_buster.pagination import CustomPageNumberPagination
 
 
-class MovieView(APIView):
+class MovieView(APIView, CustomPageNumberPagination):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsUserAllowed]
 
@@ -18,9 +19,10 @@ class MovieView(APIView):
 
     def get(self, request: Request) -> Response:
         movies = Movie.objects.all()
-        serializer = MovieSerializer(movies, many=True)
+        result_page = self.paginate_queryset(movies, request, view=self)
+        serializer = MovieSerializer(result_page, many=True)
 
-        return Response(serializer.data, status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
 
 class MovieDetailView(APIView):
